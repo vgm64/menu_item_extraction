@@ -38,9 +38,11 @@ def master_pipeline():
  	biz_data = load_phrases_and_biz_data.get_biz_data(BIZ_DATA_FILENAME, PATH)
 	
 	print "COMPUTING CANDIDATES..."
-	fewbizids = [x[0] for x in get_bizids_with_lots_reviews(biz_data,1)]
-	for biz_id in fewbizids:
+	fewbizids = get_bizids_with_lots_reviews(biz_data,5)
+	for biz_id,nreviews in fewbizids:
 		print "FOR BUSINESS: %s" % biz_id
+		print "Name: %s" % biz_data[biz_id]['review'][0]['name']
+		print "Number of Reviews: %s" % nreviews
 		mini_pipeline(biz_data[biz_id], prefix_data, suffix_data,menu_dict)
 
 def mini_pipeline(biz, prefix_data, suffix_data,menudict):
@@ -50,22 +52,28 @@ def mini_pipeline(biz, prefix_data, suffix_data,menudict):
 	candidate_menu_items_by_prefix = get_candidate_menu_items.extract_candidate_menu_items_from_prefix(tokens, prefix_data, MENU_ITEM_LENGTH)
 	candidate_menu_items_by_suffix = get_candidate_menu_items.extract_candidate_menu_items_from_suffix(tokens, suffix_data, MENU_ITEM_LENGTH)
 	
-	candidate_menu_items_by_prefix_sorted = sort_candidates(candidate_menu_items_by_prefix,menudict)
-	print "BY PREFIX"
-	counter = 0
-	max_items_to_print = 20
-	for item in candidate_menu_items_by_prefix_sorted:
-		counter+= 1
-		if counter < max_items_to_print:
-			print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
+	print "Menu Based Matches"
+	menu_based_matches = get_candidate_menu_items.get_menu_base_matches(menudict, tokens)
+	menu_based_matches_sorted = sorted(menu_based_matches.items(), key=itemgetter(1),reverse=True)
+	for i in range(0,30):
+		print menu_based_matches_sorted[i]
 
-	print "BY SUFFIX"
+	candidate_menu_items_by_prefix_sorted = sort_candidates(candidate_menu_items_by_prefix,menudict)
+	#print "BY PREFIX"
+	#counter = 0
+	#max_items_to_print = 20
+	#for item in candidate_menu_items_by_prefix_sorted:
+	#	counter+= 1
+	#	if counter < max_items_to_print:
+	#		print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
+
+	#print "BY SUFFIX"
 	candidate_menu_items_by_suffix_sorted = sort_candidates(candidate_menu_items_by_suffix,menudict)
-	counter = 0
-	for item in candidate_menu_items_by_suffix_sorted:
-		counter+= 1
-                if counter < max_items_to_print:
-        		print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
+	#counter = 0
+	#for item in candidate_menu_items_by_suffix_sorted:
+	#	counter+= 1
+        #        if counter < max_items_to_print:
+        #		print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
 	
 	print "Aggregated Results"
 	ag_results = aggregate_all_candidates(candidate_menu_items_by_prefix_sorted + candidate_menu_items_by_suffix_sorted)
