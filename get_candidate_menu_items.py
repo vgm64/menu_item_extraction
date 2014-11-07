@@ -88,9 +88,6 @@ def extract_candidate_menu_items_from_prefix(tokens, prefix_list, menu_item_leng
             		if prefix_candidate in prefixes:
                 		menu_item_candidate = " ".join(tokens[j:min(j + menu_item_length, len(tokens))])
 				menu_item_candidate_lower = menu_item_candidate.lower()
-				if menu_item_candidate_lower == 'banana tart':
-                                	context = " ".join(tokens[max(0,i-10):min(i+10,len(tokens))])
-                                	print "AAAA: %s" % context
 				if len(tokens) - j >= 1:
                     			occurance = [prefix_candidate,prefixes[prefix_candidate],menu_item_candidate]
                     			if menu_item_candidate_lower not in candidate_menu_items:
@@ -111,9 +108,6 @@ def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_leng
 		if i > 0:
                     occurance = [suffix_candidate,suffixes[suffix_candidate],menu_item_candidate]
                     if menu_item_candidate_lower not in candidate_menu_items:
-			if menu_item_candidate_lower == 'banana tart':
-				context = " ".join(tokens[max(0,i-10):min(i+10,len(tokens))])
-				print "BBBB: %s" % context
                         candidate_menu_items[menu_item_candidate_lower] = []
                     candidate_menu_items[menu_item_candidate_lower].append(occurance)
     return convert_to_output_format(candidate_menu_items)
