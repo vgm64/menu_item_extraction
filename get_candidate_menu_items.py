@@ -118,7 +118,7 @@ def get_menu_base_matches(menu_dict, tokens):
 	for i in range(0,len(tokens)-max_length):
 		for j in range(i + min_length, i + max_length + 1):
 			menu_item_candidate = " ".join(tokens[i:j])
-			if menu_item_candidate in menu_dict:
+			if menu_item_candidate in menu_dict and len(menu_item_candidate.split(" ")) > 1:
 				if menu_item_candidate not in found_in_menus:
 					found_in_menus[menu_item_candidate] = 0
 				found_in_menus[menu_item_candidate]+= 1
@@ -140,8 +140,8 @@ def extract_candidate_menu_items(tokens, prefix_list, suffix_list):
 	trigrams_suffix = extract_candidate_menu_items_from_suffix(tokens, suffix_list, 3)
         for item in trigrams_suffix:
                 candidate_menu_item = item['candidate_menu_item']
-		first_bigram = " ".join(candidate_menu_item.split(" ")[0:1])
-		second_bigram = " ".join(candidate_menu_item.split(" ")[1:2])
+		first_bigram = " ".join(candidate_menu_item.split(" ")[0:2])
+		second_bigram = " ".join(candidate_menu_item.split(" ")[1:3])
 		if first_bigram in bigrams_prefix_dict and second_bigram in bigrams_suffix_dict:
 			#if float(item['extraction_score'])/bigrams_suffix[second_bigram]['extraction_score'] > 0.9
 			#	del bigrams_suffix[second_bigram]
@@ -152,10 +152,12 @@ def extract_candidate_menu_items(tokens, prefix_list, suffix_list):
 	trigrams_prefix = extract_candidate_menu_items_from_prefix(tokens, suffix_list, 3)
 	for item in trigrams_prefix:
                 candidate_menu_item = item['candidate_menu_item']
-                first_bigram = " ".join(candidate_menu_item.split(" ")[0:1])
-                second_bigram = " ".join(candidate_menu_item.split(" ")[1:2])
-                if first_bigram in bigrams_prefix_dict and second_bigram in bigram_suffix_dict:
+                first_bigram = " ".join(candidate_menu_item.split(" ")[0:2])
+                second_bigram = " ".join(candidate_menu_item.split(" ")[1:3])
+                if first_bigram in bigrams_prefix_dict and second_bigram in bigrams_suffix_dict:
                         output.append(item)
+			to_remove_from_bigrams.add(first_bigram)
+                        to_remove_from_bigrams.add(second_bigram)
 	
 	print "Got %s  triplets" % str(len(output))
 	for item in bigrams_suffix_dict:
