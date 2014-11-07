@@ -29,7 +29,7 @@ def aggregate_pattern_support(filename, outputdir):
         
             
         suffixes = sorted(suffixes.items(), key=operator.itemgetter(1),reverse=True)
-        out = open(outputdir+"suffix_support", 'w')
+        out = open(outputdir+"suffix_support_train", 'w')
         for suffix in suffixes:
 	    if len(suffix[0].split(" ")) > 1:
             	output = dict()
@@ -40,18 +40,18 @@ def aggregate_pattern_support(filename, outputdir):
         out.close()
         
         prefixes = sorted(prefixes.items(), key=operator.itemgetter(1),reverse=True)
-        out = open(outputdir+"prefix_support", 'w')
+        out = open(outputdir+"prefix_support_train", 'w')
         for prefix in prefixes:
             if len(prefix[0].split(" ")) > 1:
             	output = dict()
             	output['phrase'] = prefix[0]
             	output['support'] = prefix[1]
             	json.dump(output, out)
-        out.write("\n")
+        	out.write("\n")
         out.close()
         
         suffix_prefix_pairs = sorted(suffix_prefix_pairs.items(), key=operator.itemgetter(1),reverse=True)
-        out = open(outputdir+"suffix_prefix_pair_support", 'w')
+        out = open(outputdir+"suffix_prefix_pair_support_train", 'w')
         for pair in suffix_prefix_pairs:
             output = dict()
             output['phrase'] = pair[0]
@@ -60,4 +60,4 @@ def aggregate_pattern_support(filename, outputdir):
             out.write("\n")
         out.close()
 
-aggregate_pattern_support("/scratch/mariachr/menu_item_extraction/data/raw_extracted_patterns","/scratch/mariachr/menu_item_extraction/data/")
+aggregate_pattern_support("/scratch/mariachr/menu_item_extraction/data/raw_extracted_patterns_train","/scratch/mariachr/menu_item_extraction/data/")

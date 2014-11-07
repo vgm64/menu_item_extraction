@@ -70,5 +70,5 @@ def process_business(all_businesses, output_filename):
                     print "Done with %s lines. %s businesses OK and %s businesses skipped!" % (str(line_counter),str(biz_counter),str(biz_skipped))
     outfile.close()
 
-all_businesses = json.load(open("/scratch/mariachr/menu_item_extraction/data/biz_id_index_menu_and_review.json"))
-process_business(all_businesses,"/scratch/mariachr/menu_item_extraction/data/raw_extracted_patterns")
+all_businesses = json.load(open("/scratch/mariachr/menu_item_extraction/data/tri_city_train_biz_id_index_menu_and_review_filtered.json"))
+process_business(all_businesses,"/scratch/mariachr/menu_item_extraction/data/raw_extracted_patterns_train")
