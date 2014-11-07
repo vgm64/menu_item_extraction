@@ -35,18 +35,20 @@ def convert_phrase_list_to_dictionary(phrase_list):
     
 def aggregate_phrase_occurances(occurances):
     phrases = dict()
+    names_with_varrying_capitalization = set()
     extraction_score = 0
     for phrase in occurances:
         if len(phrase[0]) == 0:
             continue
 	support = phrase[1]
+	names_with_varrying_capitalization.add(phrase[2])
 	extraction_score+= support
         if phrase[0] not in phrases:
         	phrases[phrase[0]] = [support, 1]
         else:
            	current_count = phrases[phrase[0]][1]
             	phrases[phrase[0]] = [support, current_count + 1]
-    return phrases, extraction_score
+    return phrases, extraction_score, names_with_varrying_capitalization
 
 def convert_to_output_format(candidate_menu_items):
     output = []
@@ -55,13 +57,14 @@ def convert_to_output_format(candidate_menu_items):
     	candidate_menu_item_tokens = candidate_menu_item.lower().split(" ")
 	candidate_menu_item_tokens_no_stopwords = [w for w in candidate_menu_item_tokens if not w in stopset]
 	if float(len(candidate_menu_item_tokens_no_stopwords))/len(candidate_menu_item_tokens) > 0.5:
-        	extraction_info, extraction_score = aggregate_phrase_occurances(candidate_menu_items[candidate_menu_item])
+        	extraction_info, extraction_score,names_with_varrying_capitalization = aggregate_phrase_occurances(candidate_menu_items[candidate_menu_item])
         	output_item = dict()
         	output_item['candidate_menu_item'] = candidate_menu_item
         	total_extractions = len(candidate_menu_items[candidate_menu_item])
 		output_item['total_extractions'] = total_extractions
 		output_item['distinct_phrase_extractions'] = len(extraction_info)
 		output_item['extraction_score'] = extraction_score
+		output_item['varrious_capitalizations'] = names_with_varrying_capitalization
 		extractions = []
         	for prefix in extraction_info:
         		extraction = dict()
@@ -82,11 +85,12 @@ def extract_candidate_menu_items_from_prefix(tokens, prefix_list, menu_item_leng
             prefix_candidate = " ".join(tokens[i:j])
             if prefix_candidate in prefixes:
                 menu_item_candidate = " ".join(tokens[j:min(j + menu_item_length, len(tokens))])
+		menu_item_candidate_lower = menu_item_candidate.lower()
 		if len(tokens) - j >= 1:
-                    occurance = [prefix_candidate,prefixes[prefix_candidate]]
-                    if menu_item_candidate not in candidate_menu_items:
-                        candidate_menu_items[menu_item_candidate] = []
-                    candidate_menu_items[menu_item_candidate].append(occurance)          
+                    occurance = [prefix_candidate,prefixes[prefix_candidate],menu_item_candidate]
+                    if menu_item_candidate_lower not in candidate_menu_items:
+                        candidate_menu_items[menu_item_candidate_lower] = []
+                    candidate_menu_items[menu_item_candidate_lower].append(occurance)          
     return convert_to_output_format(candidate_menu_items)
 
 def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_length):
@@ -96,12 +100,13 @@ def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_leng
     for i in range(0,len(tokens)):
         for j in range(i + min_length, i + max_length + 1):
             suffix_candidate = " ".join(tokens[i:j])
-            if suffix_candidate in suffixes:
+	    if suffix_candidate in suffixes:
                 menu_item_candidate = " ".join(tokens[max(i - menu_item_length, 0):i])
+		menu_item_candidate_lower = menu_item_candidate.lower()
 		if i > 0:
-                    occurance = [suffix_candidate,suffixes[suffix_candidate]]
-                    if menu_item_candidate not in candidate_menu_items:
-                        candidate_menu_items[menu_item_candidate] = []
-                    candidate_menu_items[menu_item_candidate].append(occurance)
+                    occurance = [suffix_candidate,suffixes[suffix_candidate],menu_item_candidate]
+                    if menu_item_candidate_lower not in candidate_menu_items:
+                        candidate_menu_items[menu_item_candidate_lower] = []
+                    candidate_menu_items[menu_item_candidate_lower].append(occurance)
     return convert_to_output_format(candidate_menu_items)
 
