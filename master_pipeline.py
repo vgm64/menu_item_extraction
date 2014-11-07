@@ -11,10 +11,10 @@ import ujson as json
 
 PATH = '/scratch/mariachr/menu_item_extraction/data/'
 
-BIZ_DATA_FILENAME='biz_id_index_menu_and_review.json'
-PREFIX_FILENAME='prefix_support'
-SUFFIX_FILENAME='suffix_support'
-MENU_DICT_FILENAME='menudict.p'
+BIZ_DATA_FILENAME='tri_city_test_biz_id_index_menu_and_review_filtered.json'
+PREFIX_FILENAME='prefix_support_train'
+SUFFIX_FILENAME='suffix_support_train'
+MENU_DICT_FILENAME='menudict_train.p'
 MENU_ITEM_LENGTH = 2
 
 def load_data_only():
@@ -60,14 +60,17 @@ def mini_pipeline(biz, prefix_data, suffix_data,menudict):
 			print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
 
 	print "BY SUFFIX"
-
 	candidate_menu_items_by_suffix_sorted = sort_candidates(candidate_menu_items_by_suffix,menudict)
 	counter = 0
 	for item in candidate_menu_items_by_suffix_sorted:
 		counter+= 1
                 if counter < max_items_to_print:
         		print(item['candidate_menu_item'],item['total_extractions'],item['extraction_score'])
-
+	
+	print "Aggregated Results"
+	ag_results = aggregate_all_candidates(candidate_menu_items_by_prefix_sorted + candidate_menu_items_by_suffix_sorted)
+	for i in range(0,30):
+		print ag_results[i]
 	#score = compare_with_actual_menu(results, biz)
 
 def sort_candidates(cands,menudict):
@@ -77,6 +80,16 @@ def sort_candidates(cands,menudict):
 			item['extraction_score'] = item['extraction_score']**2
 	#sort by extraction_score
 	cands_sorted = sorted(cands, key=itemgetter('extraction_score'),reverse=True)
+	return cands_sorted
+
+def aggregate_all_candidates(cands):
+	resultcand = dict()
+	for item in cands:
+		if item['candidate_menu_item'] in resultcand:
+			resultcand[item['candidate_menu_item']] += item['extraction_score']
+		else:
+			resultcand[item['candidate_menu_item']] = item['extraction_score']
+	cands_sorted = sorted(resultcand.items(), key=itemgetter(1),reverse=True)
 	return cands_sorted
 
 #finds businesses that have the most reviews and returns a list of ids and review count

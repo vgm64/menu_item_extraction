@@ -24,7 +24,7 @@ def read_files(review_file, menu_file):
         fields = line.split("\t")
         review_dict = dict(zip(review_header, fields))
         biz_id = review_dict['id']
-
+        result_dict.setdefault(biz_id, {})
 
         if 'review' not in result_dict[biz_id]:
             result_dict[biz_id]['review'] = []
