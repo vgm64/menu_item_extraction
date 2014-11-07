@@ -1,12 +1,11 @@
-from create_bizid_indexed_json import 
 import ujson as json
 
 
-PATH = '../data/'
+#PATH = '/scratch/mariachr/menu_item_extraction/data'
 
-BIZ_DATA_FILENAME='biz_id_index_menu_and_review.json'
-PREFIX_FILENAME='prefix_support'
-SUFFIX_FILENAME='suffix_support'
+#BIZ_DATA_FILENAME='biz_id_index_menu_and_review.json'
+#PREFIX_FILENAME='prefix_support'
+#SUFFIX_FILENAME='suffix_support'
 
 def get_phrases(prefix_filename, suffix_filename, path):
 
