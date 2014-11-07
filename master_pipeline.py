@@ -31,19 +31,22 @@ def mini_pipeline(biz, prefix_data, suffix_data):
 	#print tokens
 	candidate_menu_items_by_prefix = get_candidate_menu_items.extract_candidate_menu_items_from_prefix(tokens, prefix_data, MENU_ITEM_LENGTH)
 	candidate_menu_items_by_suffix = get_candidate_menu_items.extract_candidate_menu_items_from_suffix(tokens, suffix_data, MENU_ITEM_LENGTH)
+	from operator import itemgetter
+	candidate_menu_items_by_prefix_sorted = sorted(candidate_menu_items_by_prefix, key=itemgetter('extraction_score'),reverse=True)
 	print "BY PREFIX"
 	counter = 0
-	max_items_to_print = 10
-	for item in candidate_menu_items_by_prefix:
+	max_items_to_print = 20
+	for item in candidate_menu_items_by_prefix_sorted:
 		counter+= 1
 		if counter < max_items_to_print:
-			print(item['candidate_menu_item'],item['extractions'])
+			print(item['candidate_menu_item'],item['total_extractions'])
 	print "BY SUFFIX"
+	candidate_menu_items_by_suffix_sorted = sorted(candidate_menu_items_by_suffix, key=itemgetter('extraction_score'),reverse=True)
 	counter = 0
-	for item in candidate_menu_items_by_suffix:
+	for item in candidate_menu_items_by_suffix_sorted:
 		counter+= 1
                 if counter < max_items_to_print:
-        		print(item['candidate_menu_item'],item['extractions'])
+        		print(item['candidate_menu_item'],item['total_extractions'])
 	#len_of_menu_items = 2
 	#prefix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingPrefixPhrases(tokens, prefix_data, len_of_menu_items)
 	#suffix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingSuffixPhrases(tokens, suffix_data, len_of_menu_items)

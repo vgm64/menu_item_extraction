@@ -17,26 +17,29 @@ def convert_phrase_list_to_dictionary(phrase_list):
     
 def aggregate_phrase_occurances(occurances):
     phrases = dict()
+    extraction_score = 0
     for phrase in occurances:
         if len(phrase) == 0:
             continue
         support = phrase[1]
+	extraction_score+= support
         if phrase[0] not in phrases:
             phrases[phrase[0]] = [support, 1]
         else:
             current_count = phrases[phrase[0]][1]
             phrases[phrase[0]] = [support, current_count + 1]
-    return phrases
+    return phrases, extraction_score
 
 def convert_to_output_format(candidate_menu_items):
     output = []
     for candidate_menu_item in candidate_menu_items:
-        extraction_info = aggregate_phrase_occurances(candidate_menu_items[candidate_menu_item])
+        extraction_info, extraction_score = aggregate_phrase_occurances(candidate_menu_items[candidate_menu_item])
         output_item = dict()
         output_item['candidate_menu_item'] = candidate_menu_item
         total_extractions = len(candidate_menu_items[candidate_menu_item])
 	output_item['total_extractions'] = total_extractions
 	output_item['distinct_phrase_extractions'] = len(extraction_info)
+	output_item['extraction_score'] = extraction_score
 	extractions = []
         for prefix in extraction_info:
             extraction = dict()
