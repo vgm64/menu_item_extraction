@@ -1,7 +1,9 @@
 
 import load_phrases_and_biz_data
 import ExtractMenuUsingPhrases
+#helpers is a file that defines some helper functions for counting dictionaries
 import helpers
+import generateTokenizedRevs
 
 import ujson as json
 
@@ -17,21 +19,23 @@ def master_pipeline():
 	prefix_data, suffix_data = load_phrases_and_biz_data.get_phrases(PREFIX_FILENAME, SUFFIX_FILENAME, PATH)
  	biz_data = load_phrases_and_biz_data.get_biz_data(BIZ_DATA_FILENAME, PATH)
 	
-	fewbiz = [x[0] for x in get_biz_with_lots_reviews(biz_data,10)]
-	#for biz_id in biz_data:
-	#	mini_pipeline(biz_data[biz_id], prefix_data, suffix_data)
+	fewbizids = [x[0] for x in get_bizids_with_lots_reviews(biz_data,1)]
+	for biz_id in fewbizids:
+		mini_pipeline(biz_data[biz_id], prefix_data, suffix_data)
 
 def mini_pipeline(biz, prefix_data, suffix_data):
 
-	tokens = generate_tokenized_reviews(biz)
+	tokens = generateTokenizedRevs.GenerateTokenizedRevs(biz)
+	print tokens
 
-	len_of_menu_items = 2
-	prefix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingPrefixPhrases(tokens, prefix_data, len_of_menu_items)
-	suffix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingSuffixPhrases(tokens, suffix_data, len_of_menu_items)
+	#len_of_menu_items = 2
+	#prefix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingPrefixPhrases(tokens, prefix_data, len_of_menu_items)
+	#suffix_results = ExtractMenuUsingPhrases.ExtractMenuItemUsingSuffixPhrases(tokens, suffix_data, len_of_menu_items)
 
-	score = compare_with_actual_menu(results, biz)
+	#score = compare_with_actual_menu(results, biz)
 
-def get_biz_with_lots_reviews(allbiz,n):
+#finds businesses that have the most reviews and returns a list of ids and review count
+def get_bizids_with_lots_reviews(allbiz,n):
 	bizid_revcount = {}
 	for bizid in allbiz:
 		thebiz = allbiz[bizid]
