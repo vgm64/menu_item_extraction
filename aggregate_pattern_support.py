@@ -31,21 +31,23 @@ def aggregate_pattern_support(filename, outputdir):
         suffixes = sorted(suffixes.items(), key=operator.itemgetter(1),reverse=True)
         out = open(outputdir+"suffix_support", 'w')
         for suffix in suffixes:
-            output = dict()
-            output['phrase'] = suffix[0]
-            output['support'] = suffix[1]
-            json.dump(output, out)
-            out.write("\n")
+	    if len(suffix[0].split(" ")) > 1:
+            	output = dict()
+            	output['phrase'] = suffix[0]
+            	output['support'] = suffix[1]
+            	json.dump(output, out)
+            	out.write("\n")
         out.close()
         
         prefixes = sorted(prefixes.items(), key=operator.itemgetter(1),reverse=True)
         out = open(outputdir+"prefix_support", 'w')
         for prefix in prefixes:
-            output = dict()
-            output['phrase'] = prefix[0]
-            output['support'] = prefix[1]
-            json.dump(output, out)
-            out.write("\n")
+            if len(prefix[0].split(" ")) > 1:
+            	output = dict()
+            	output['phrase'] = prefix[0]
+            	output['support'] = prefix[1]
+            	json.dump(output, out)
+        out.write("\n")
         out.close()
         
         suffix_prefix_pairs = sorted(suffix_prefix_pairs.items(), key=operator.itemgetter(1),reverse=True)

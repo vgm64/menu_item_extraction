@@ -34,7 +34,10 @@ def convert_to_output_format(candidate_menu_items):
         extraction_info = aggregate_phrase_occurances(candidate_menu_items[candidate_menu_item])
         output_item = dict()
         output_item['candidate_menu_item'] = candidate_menu_item
-        extractions = []
+        total_extractions = len(candidate_menu_items[candidate_menu_item])
+	output_item['total_extractions'] = total_extractions
+	output_item['distinct_phrase_extractions'] = len(extraction_info)
+	extractions = []
         for prefix in extraction_info:
             extraction = dict()
             extraction['phrase'] = prefix
@@ -65,19 +68,17 @@ def extract_candidate_menu_items_from_prefix(tokens, prefix_list, menu_item_leng
 
 def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_length):
     suffixes = convert_phrase_list_to_dictionary(suffix_list)
-    max_length, min_length = get_max_phrase_length(suffixes)
-    
+    max_length, min_length = get_max_phrase_length(suffixes) 
     candidate_menu_items = dict()
     for i in range(0,len(tokens)):
         for j in range(i + min_length, i + max_length + 1):
             suffix_candidate = " ".join(tokens[i:j])
             if suffix_candidate in suffixes:
                 menu_item_candidate = " ".join(tokens[max(i - menu_item_length, 0):i])
-                if i > 0:
+		if i > 0:
                     occurance = [suffix_candidate,suffixes[suffix_candidate]]
                     if menu_item_candidate not in candidate_menu_items:
                         candidate_menu_items[menu_item_candidate] = []
                     candidate_menu_items[menu_item_candidate].append(occurance)
-                        
     return convert_to_output_format(candidate_menu_items)
 
