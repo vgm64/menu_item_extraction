@@ -45,6 +45,18 @@ def master_pipeline():
 		print "Number of Reviews: %s" % nreviews
 		mini_pipeline(biz_data[biz_id], prefix_data, suffix_data,menu_dict)
 
+def get_menu_based_matches(biz,prefix_data,suffix_data,menudict):
+        tokens = generateTokenizedRevs.GenerateTokenizedRevs(biz)
+        #print tokens
+        candidate_menu_items_by_prefix = get_candidate_menu_items.extract_candidate_menu_items_from_prefix(tokens, prefix_data, MENU_ITEM_LENGTH)
+        candidate_menu_items_by_suffix = get_candidate_menu_items.extract_candidate_menu_items_from_suffix(tokens, suffix_data, MENU_ITEM_LENGTH)
+
+        print "Menu Based Matches"
+        menu_based_matches = get_candidate_menu_items.get_menu_base_matches(menudict, tokens)
+        menu_based_matches_sorted = sorted(menu_based_matches.items(), key=itemgetter(1),reverse=True)
+        for i in range(0,30):
+                print menu_based_matches_sorted[i]
+
 def mini_pipeline(biz, prefix_data, suffix_data,menudict):
 
 	tokens = generateTokenizedRevs.GenerateTokenizedRevs(biz)
@@ -52,12 +64,6 @@ def mini_pipeline(biz, prefix_data, suffix_data,menudict):
 	candidate_menu_items_by_prefix = get_candidate_menu_items.extract_candidate_menu_items_from_prefix(tokens, prefix_data, MENU_ITEM_LENGTH)
 	candidate_menu_items_by_suffix = get_candidate_menu_items.extract_candidate_menu_items_from_suffix(tokens, suffix_data, MENU_ITEM_LENGTH)
 	
-	print "Menu Based Matches"
-	menu_based_matches = get_candidate_menu_items.get_menu_base_matches(menudict, tokens)
-	menu_based_matches_sorted = sorted(menu_based_matches.items(), key=itemgetter(1),reverse=True)
-	for i in range(0,30):
-		print menu_based_matches_sorted[i]
-
 	candidate_menu_items_by_prefix_sorted = sort_candidates(candidate_menu_items_by_prefix,menudict)
 	#print "BY PREFIX"
 	#counter = 0
