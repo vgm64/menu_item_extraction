@@ -88,6 +88,9 @@ def extract_candidate_menu_items_from_prefix(tokens, prefix_list, menu_item_leng
             		if prefix_candidate in prefixes:
                 		menu_item_candidate = " ".join(tokens[j:min(j + menu_item_length, len(tokens))])
 				menu_item_candidate_lower = menu_item_candidate.lower()
+				if menu_item_candidate_lower == 'banana tart':
+                                	context = " ".join(tokens[max(0,i-10):min(i+10,len(tokens))])
+                                	print "AAAA: %s" % context
 				if len(tokens) - j >= 1:
                     			occurance = [prefix_candidate,prefixes[prefix_candidate],menu_item_candidate]
                     			if menu_item_candidate_lower not in candidate_menu_items:
@@ -108,6 +111,9 @@ def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_leng
 		if i > 0:
                     occurance = [suffix_candidate,suffixes[suffix_candidate],menu_item_candidate]
                     if menu_item_candidate_lower not in candidate_menu_items:
+			if menu_item_candidate_lower == 'banana tart':
+				context = " ".join(tokens[max(0,i-10):min(i+10,len(tokens))])
+				print "BBBB: %s" % context
                         candidate_menu_items[menu_item_candidate_lower] = []
                     candidate_menu_items[menu_item_candidate_lower].append(occurance)
     return convert_to_output_format(candidate_menu_items)
@@ -124,9 +130,9 @@ def get_menu_base_matches(menu_dict, tokens):
 				found_in_menus[menu_item_candidate]+= 1
 	return found_in_menus
 
-def extract_candidate_menu_items(tokens, prefix_list, suffix_list):
+def extract_candidate_menu_items(menu_dict, tokens, prefix_list, suffix_list):
 	output = []
-	menu_dict = DictLookUp.load_menu_dictionary("/scratch/mariachr/menu_item_extraction/data/","menudict.p")
+	#menu_dict = DictLookUp.load_menu_dictionary("/scratch/mariachr/menu_item_extraction/data/","menudict.p")
 	bigrams_suffix = extract_candidate_menu_items_from_suffix(tokens, suffix_list, 2)
 	bigrams_prefix = extract_candidate_menu_items_from_prefix(tokens, prefix_list, 2)
 	bigrams_suffix_dict = dict()
@@ -158,25 +164,24 @@ def extract_candidate_menu_items(tokens, prefix_list, suffix_list):
                         output.append(item)
 			to_remove_from_bigrams.add(first_bigram)
                         to_remove_from_bigrams.add(second_bigram)
-	
-	print "Got %s  triplets" % str(len(output))
-	for item in bigrams_suffix_dict:
-		if item not in to_remove_from_bigrams:
-			output.append(bigrams_suffix_dict[item])
-
-	for item in bigrams_prefix_dict:
-                if item not in to_remove_from_bigrams:
-                        output.append(bigrams_prefix_dict[item])
-
-	output = master_pipeline.sort_candidates(output,menu_dict)
+	return output
+	#iprint "Got %s  triplets" % str(len(output))
+	#for item in bigrams_suffix_dict:
+	#	if item not in to_remove_from_bigrams:
+	#		output.append(bigrams_suffix_dict[item])
+	#
+	#for item in bigrams_prefix_dict:
+        #        if item not in to_remove_from_bigrams:
+        #                output.append(bigrams_prefix_dict[item])
+	#
+	#output = master_pipeline.sort_candidates(output,menu_dict)
 	#sort_candidates
-	count = 0
-	for item in output:
-		candidate_menu_item_tokens = item['candidate_menu_item'].split(" ")
-		if len(candidate_menu_item_tokens) > 2:
-			count+= 1
-			if count > 10:
-				return
-			print "%s  with score %s" % (item['candidate_menu_item'],str(item['extraction_score']))
+	#count = 0
+	#for item in output:
+	#	candidate_menu_item_tokens = item['candidate_menu_item'].split(" ")
+	#	count+= 1
+	#	if count > 10:
+	#		return
+	#	print "%s  with score %s" % (item['candidate_menu_item'],str(item['extraction_score']))
 
 	
