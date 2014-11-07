@@ -110,3 +110,39 @@ def extract_candidate_menu_items_from_suffix(tokens, suffix_list, menu_item_leng
                     candidate_menu_items[menu_item_candidate_lower].append(occurance)
     return convert_to_output_format(candidate_menu_items)
 
+def extract_candidate_menu_items(tokens, prefix_list, suffix_list):
+	output = ()
+	bigrams_suffix = extract_candidate_menu_items_from_suffix(tokens, suffix_list, 2)
+	bigrams_prefix = extract_candidate_menu_items_from_prefix(tokens, suffix_list, 2)
+	bigrams_suffix_dict = dict()
+	bigrams_prefix_dict = dict()
+	for item in bigrams_suffix:
+		bigrams_suffix_dict[item['candidate_menu_item']] = item
+	for item in bigrams_prefix:
+                bigrams_predix_dict[item['candidate_menu_item']] = item
+
+
+	trigrams_suffix = extract_candidate_menu_items_from_suffix(tokens, suffix_list, 3)
+        for item in trigrams_suffix:
+                candidate_menu_item = item['candidate_menu_item']
+		first_bigram = " ".join(candidate_menu_item.split(" ")[0:1])
+		second_bigram = " ".join(candidate_menu_item.split(" ")[1:2])
+		if first_bigram in bigrams_pefix_dict and second_bigram in bigram_suffix_dict:
+			output.append(item)
+
+	trigrams_prefix = extract_candidate_menu_items_from_prefix(tokens, suffix_list, 3)
+	for item in trigrams_prefix:
+                candidate_menu_item = item['candidate_menu_item']
+                first_bigram = " ".join(candidate_menu_item.split(" ")[0:1])
+                second_bigram = " ".join(candidate_menu_item.split(" ")[1:2])
+                if first_bigram in bigrams_pefix_dict and second_bigram in bigram_suffix_dict:
+                        output.append(item)
+
+	output.extend(bigrams_suffix)
+	output.extend(bigrams_prefix)
+
+
+
+
+
+	
